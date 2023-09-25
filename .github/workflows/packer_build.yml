@@ -20,7 +20,7 @@ jobs:
       matrix:
         include:
           - name: ubuntu-22.04
-            path: packer/ubuntu2204
+            path: ubuntu2204
 
     steps:
       - name: Checkout
