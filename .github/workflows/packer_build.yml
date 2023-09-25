@@ -20,7 +20,7 @@ jobs:
       matrix:
         include:
           - name: ubuntu-22.04
-            path: ubuntu2204
+            path: ./ubuntu2204
 
     steps:
       - name: Checkout
@@ -43,10 +43,10 @@ jobs:
       - name: Build Image
         run: |          
           packer build \
-          -var 'client_id=${{ secrets.CLIENT_ID }}'\
-          -var 'client_secret=${{ secrets.CLIENT_SECRET }}'\
-          -var 'subscription_id=${{ secrets.SUBSCRIPTION_ID }}'\
-          -var 'tenant_id=${{ secrets.TENANT_ID }}'\
-          -var 'rg_name=${{ secrets.RESOURCE_GROUP_NAME }}'\
-          -var 'image_name=${{ matrix.name }}'\
+          -var 'client_id=${{ secrets.CLIENT_ID }}' \
+          -var 'client_secret=${{ secrets.CLIENT_SECRET }}' \
+          -var 'subscription_id=${{ secrets.SUBSCRIPTION_ID }}' \
+          -var 'tenant_id=${{ secrets.TENANT_ID }}' \
+          -var 'rg_name=${{ secrets.RESOURCE_GROUP_NAME }}' \
+          -var 'image_name=${{ matrix.name }}' \
           ${{ matrix.path }}
