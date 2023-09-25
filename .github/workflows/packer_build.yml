@@ -19,8 +19,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: "ubuntu-22.04"
-            path: "packer/ubuntu2204"
+          - name: ubuntu-22.04
+            path: packer/ubuntu2204
 
     steps:
       - name: Checkout
@@ -43,7 +43,7 @@ jobs:
       - name: Build Image
         run: |          
           packer build \
-          -var 'client_id=${{ secrets.CLIENT_ID }}\
+          -var 'client_id=${{ secrets.CLIENT_ID }}'\
           -var 'client_secret=${{ secrets.CLIENT_SECRET }}'\
           -var 'subscription_id=${{ secrets.SUBSCRIPTION_ID }}'\
           -var 'tenant_id=${{ secrets.TENANT_ID }}'\
