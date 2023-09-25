@@ -1,0 +1,52 @@
+name: Build Packer Images
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-image:
+    name: Build Ubuntu
+    timeout-minutes: 28800
+    env:
+      BUILD_RESOURCE_GROUP_NAME: "rg-pkr-build-${{ matrix.name }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: "ubuntu-22.04"
+            path: "packer/ubuntu2204"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Az CLI Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Setup Environment
+        run: |
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+          curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+          sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+          sudo apt-get update && sudo apt-get install packer
+
+      - name: Build Image
+        run: |          
+          packer build \
+          -var 'client_id=${{ secrets.CLIENT_ID }}\
+          -var 'client_secret=${{ secrets.CLIENT_SECRET }}'\
+          -var 'subscription_id=${{ secrets.SUBSCRIPTION_ID }}'\
+          -var 'tenant_id=${{ secrets.TENANT_ID }}'\
+          -var 'resource_group_name=${{ secrets.RESOURCE_GROUP_NAME }}'\
+          -var 'image_name=${{ matrix.name }}'\
+          ${{ matrix.path }}
